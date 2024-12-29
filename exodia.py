@@ -85,6 +85,23 @@ def portscan():
 ░█▀▀░█░█░█▀▄░░█░░░░▀▀█░█░░░█▀█░█░█
 ░▀░░░▀▀▀░▀░▀░░▀░░░░▀▀▀░▀▀▀░▀░▀░▀░▀
 ----------------------------------
+𝑻𝒂𝒓𝒈𝒆𝒕:{target}
+𝑻𝒂𝒓𝒈𝒆𝒕 𝑰𝑷:{targetip}
+''')
+        options = str(input('[1]Start or [x]Cancel\n>>> '))
+
+        import os
+import socket
+import concurrent.futures
+
+def portscan():
+    while True:
+        os.system('cls' if os.name == 'nt' else 'clear')
+        print(f'''
+░█▀█░█▀█░█▀▄░▀█▀░░░█▀▀░█▀▀░█▀█░█▀█
+░█▀▀░█░█░█▀▄░░█░░░░▀▀█░█░░░█▀█░█░█
+░▀░░░▀▀▀░▀░▀░░▀░░░░▀▀▀░▀▀▀░▀░▀░▀░▀
+----------------------------------
 𝑻𝒂𝒓𝒈𝒆𝒕: {target}
 𝑻𝒂𝒓𝒈𝒆𝒕 𝑰𝑷: {targetip}
 ''')
@@ -102,36 +119,31 @@ def portscan():
                             if s.connect_ex((host, port)) == 0:
                                 return port
                     except socket.timeout:
+                        # Se der timeout, tenta novamente
                         pass
                     except OSError:
+                        # Trate aqui qualquer exceção de socket, se desejar logar algo
                         pass
                     except:
+                        # Mantém um except genérico para evitar travar em qualquer erro inesperado
                         pass
+                # Se todas as tentativas falharem, retorna None
                 return None
 
             def port_scanner(host=targetip, start_port=1, end_port=1024):
                 open_ports = []
-                total_ports = end_port - start_port + 1
-
                 with concurrent.futures.ThreadPoolExecutor(max_workers=50) as executor:
+                    # Mantém a lógica de envio de tarefas para cada porta
                     futures = [executor.submit(scan_port, host, p) for p in range(start_port, end_port+1)]
-                    completed = 0
                     for f in concurrent.futures.as_completed(futures):
-                        completed += 1
                         result = f.result()
                         if result:
                             open_ports.append(result)
-                        
-                        # Exibe o progresso no formato "Progresso: 10/1024 portas testadas"
-                        print(f"\rProgresso: {completed}/{total_ports} portas testadas", end="", flush=True)
 
-                # Pula uma linha ao fim do progresso
-                print()
-
+                # Salva resultados em arquivo
                 with open('scan_results.txt', 'w') as file:
                     for p in open_ports:
                         file.write(f'Porta {p} aberta\n')
-
                 return open_ports
 
             results = port_scanner()
@@ -141,6 +153,7 @@ def portscan():
         elif options == 'x':
             tools()
             break
+
 
 
 
