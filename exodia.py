@@ -40,7 +40,7 @@ def exodia():
             start()
             break
         elif options == 'x':
-            print('bye bye...')
+            os.system('cls' if os.name == 'nt' else 'clear')
             break
         else:
             print('Select valid option')
@@ -85,30 +85,45 @@ def portscan():
 ░█▀▀░█░█░█▀▄░░█░░░░▀▀█░█░░░█▀█░█░█
 ░▀░░░▀▀▀░▀░▀░░▀░░░░▀▀▀░▀▀▀░▀░▀░▀░▀
 ----------------------------------
-𝑻𝒂𝒓𝒈𝒆𝒕:{target}
-𝑻𝒂𝒓𝒈𝒆𝒕 𝑰𝑷:{targetip}
+𝑻𝒂𝒓𝒈𝒆𝒕: {target}
+𝑻𝒂𝒓𝒈𝒆𝒕 𝑰𝑷: {targetip}
 ''')
         options = str(input('[1]Start or [x]Cancel\n>>> '))
 
         if options == '1':
             def scan_port(host, port):
-                try:
-                    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-                        s.settimeout(0.5)
-                        if s.connect_ex((host, port)) == 0:
-                            return port
-                except:
-                    pass
+                # Número de tentativas para reduzir chances de falso negativo
+                retries = 3
+                for _ in range(retries):
+                    try:
+                        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                            # Timeout um pouco maior para evitar problemas de latência
+                            s.settimeout(1.0)
+                            if s.connect_ex((host, port)) == 0:
+                                return port
+                    except socket.timeout:
+                        # Se der timeout, tenta novamente
+                        pass
+                    except OSError:
+                        # Trate aqui qualquer exceção de socket, se desejar logar algo
+                        pass
+                    except:
+                        # Mantém um except genérico para evitar travar em qualquer erro inesperado
+                        pass
+                # Se todas as tentativas falharem, retorna None
                 return None
 
             def port_scanner(host=targetip, start_port=1, end_port=1024):
                 open_ports = []
                 with concurrent.futures.ThreadPoolExecutor(max_workers=50) as executor:
+                    # Mantém a lógica de envio de tarefas para cada porta
                     futures = [executor.submit(scan_port, host, p) for p in range(start_port, end_port+1)]
                     for f in concurrent.futures.as_completed(futures):
                         result = f.result()
                         if result:
                             open_ports.append(result)
+
+                # Salva resultados em arquivo
                 with open('scan_results.txt', 'w') as file:
                     for p in open_ports:
                         file.write(f'Porta {p} aberta\n')
