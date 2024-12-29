@@ -100,8 +100,8 @@ def portscan():
                 except:
                     pass
                 return None
-            
-            def port_scanner(host='127.0.0.1', start_port=1, end_port=1024):
+
+            def port_scanner(host=targetip, start_port=1, end_port=1024):
                 open_ports = []
                 with concurrent.futures.ThreadPoolExecutor(max_workers=50) as executor:
                     futures = [executor.submit(scan_port, host, p) for p in range(start_port, end_port+1)]
@@ -109,13 +109,12 @@ def portscan():
                         result = f.result()
                         if result:
                             open_ports.append(result)
-                with open('scan_results.txt','w') as file:
+                with open('scan_results.txt', 'w') as file:
                     for p in open_ports:
                         file.write(f'Porta {p} aberta\n')
                 return open_ports
 
-            # Execute port scan e exibir mensagem após conclusão
-            results = port_scanner(host=targetip, start_port=1, end_port=1024)
+            results = port_scanner()
             print("Port scan concluído. Verifique o arquivo scan_results.txt.")
             input("Pressione Enter para continuar...")
 
