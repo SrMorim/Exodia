@@ -8,6 +8,7 @@ import concurrent.futures
 import tqdm
 
 
+
 #Start
 target = sys.argv[1]
 targetip = socket.gethostbyname(target)
@@ -59,7 +60,7 @@ def attack():
 \033[0m𝑻𝒂𝒓𝒈𝒆𝒕:{target}
 𝑻𝒂𝒓𝒈𝒆𝒕 𝑰𝑷:{targetip}
 ''')
-        options = str(input('[1]Port Scan\n[2]?\n[3]?\n[4]?\n[5]?\n[x]Back\n>>> '))
+        options = str(input('[1]Port Scan\n[2]Brute Force\n[3]?\n[4]?\n[5]?\n[x]Back\n>>> '))
 
         if options == '1':
             portscan()
@@ -182,9 +183,10 @@ def arsenal():
             ---------------------------- \_#|__|#_/
 \033[0m𝑻𝒂𝒓𝒈𝒆𝒕 𝑰𝑷:{targetip}
 𝑻𝒂𝒓𝒈𝒆𝒕 𝑰𝑷: {targetip}
+𝙔𝙤𝙪𝙧 𝙄𝙋: #Colocar sistema de captura do meu IP aqui
 """)
 
-        options = str(input('[1]Auto Tor\n[2]?\n[3]?\n[4]?\n[5]?\n[x]Back\n>>> '))
+        options = str(input('[1]Auto Tor\n[2]Delete Logs\n[3]?\n[4]?\n[5]?\n[x]Back\n>>> '))
 
         if options == 'x':
             exodia()
@@ -204,7 +206,7 @@ def start():
 ''')
     global target
     global targetip
-    target = str(input('𝑻𝒂𝒓𝒈𝒆𝒕: '))
+    target = str(input('𝙉𝙚𝙬 𝙏𝙖𝙧𝙜𝙚𝙩: '))
     targetip = socket.gethostbyname(target)
     exodia()
 
